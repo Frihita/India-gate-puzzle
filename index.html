@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>India Gate Puzzle Challenge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #3e2723 0%, #4e342e 50%, #3e2723 100%);
+            overflow-x: hidden;
+        }
+
+        .background-overlay {
+            position: fixed;
+            inset: 0;
+            background-image: url('https://images.unsplash.com/photo-1587474260584-136574528ed5?w=1200');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        /* Start Screen */
+        #startScreen {
+            max-width: 600px;
+            width: 100%;
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.95) 0%, rgba(255, 243, 205, 0.95) 100%);
+            border-radius: 2rem;
+            padding: 3rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            border: 4px solid rgba(255, 193, 7, 0.5);
+            position: relative;
+        }
+
+        .corner-decoration {
+            position: absolute;
+            width: 4rem;
+            height: 4rem;
+            border: 4px solid #f59e0b;
+        }
+
+        .corner-decoration.top-left {
+            top: 0;
+            left: 0;
+            border-bottom: none;
+            border-right: none;
+            border-top-left-radius: 2rem;
+        }
+
+        .corner-decoration.top-right {
+            top: 0;
+            right: 0;
+            border-bottom: none;
+            border-left: none;
+            border-top-right-radius: 2rem;
+        }
+
+        .corner-decoration.bottom-left {
+            bottom: 0;
+            left: 0;
+            border-top: none;
+            border-right: none;
+            border-bottom-left-radius: 2rem;
+        }
+
+        .corner-decoration.bottom-right {
+            bottom: 0;
+            right: 0;
+            border-top: none;
+            border-left: none;
+            border-bottom-right-radius: 2rem;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            text-align: center;
+            color: #78350f;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            text-align: center;
+            color: #92400e;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            text-align: center;
+            color: #78350f;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+
+        .description {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(180, 83, 9, 0.2);
+            text-align: center;
+            color: #78350f;
+            line-height: 1.7;
+        }
+
+        .preview-image {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .preview-circle {
+            width: 8rem;
+            height: 8rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .preview-circle:hover {
+            transform: scale(1.1);
+        }
+
+        .preview-circle img {
+            width: 7rem;
+            height: 7rem;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .start-button {
+            width: 100%;
+            font-family: 'Cinzel', serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            padding: 1.5rem;
+            background: linear-gradient(90deg, #f59e0b 0%, #d97706 50%, #f59e0b 100%);
+            color: white;
+            border: 2px solid #fbbf24;
+            border-radius: 1.25rem;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .start-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            font-size: 0.875rem;
+            color: #78350f;
+        }
+
+        .game-info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            background: #f59e0b;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Game Screen */
+        #gameScreen {
+            display: none;
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .game-title {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            color: #fbbf24;
+            margin-bottom: 1rem;
+        }
+
+        .progress-counter {
+            display: inline-block;
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.9) 0%, rgba(217, 119, 6, 0.9) 100%);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(251, 191, 36, 0.5);
+        }
+
+        .progress-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .progress-count {
+            color: #fef3c7;
+        }
+
+        .game-area {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .panel {
+            background: linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(253, 230, 138, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border: 4px solid rgba(120, 53, 15, 0.5);
+        }
+
+        .panel-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #78350f 0%, #92400e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        #piecesContainer {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 1rem;
+            min-height: 500px;
+            padding: 1rem;
+        }
+
+        #gridContainer {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 0;
+            padding: 1rem;
+            background: transparent;
+            border-radius: 1rem;
+        }
+
+        .puzzle-piece {
+            width: 100px;
+            height: 100px;
+            background-size: 300px 400px;
+            cursor: move;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(245, 158, 11, 0.5);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .puzzle-piece:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            border-color: #fbbf24;
+            z-index: 10;
+        }
+
+        .puzzle-piece.dragging {
+            opacity: 0.5;
+            transform: scale(1.15);
+        }
+
+        .grid-cell {
+            width: 100px;
+            height: 100px;
+            background: rgba(120, 53, 15, 0.15);
+            border: 1px solid rgba(217, 119, 6, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .grid-cell.drag-over {
+            background: rgba(251, 191, 36, 0.4);
+            border-color: #fbbf24;
+            transform: scale(1.02);
+        }
+
+        .grid-cell.filled {
+            border: none;
+            background: transparent;
+        }
+
+        .grid-cell .puzzle-piece {
+            cursor: default;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+        }
+
+        @keyframes snapGlow {
+            0%, 100% {
+                box-shadow: 0 0 0 rgba(251, 191, 36, 0);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(251, 191, 36, 0.8), 0 0 60px rgba(251, 191, 36, 0.4);
+            }
+        }
+
+        @keyframes snapIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .snap-animation {
+            animation: snapGlow 0.6s ease-out, snapIn 0.4s ease-out;
+        }
+
+        .back-button {
+            font-family: 'Lato', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border: 2px solid #fbbf24;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            display: block;
+            margin: 2rem auto 0;
+        }
+
+        .back-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Completion Modal */
+        #completionModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        #completionModal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-radius: 2rem;
+            padding: 3rem;
+            max-width: 500px;
+            margin: 1rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            border: 4px solid #f59e0b;
+            position: relative;
+            transform: scale(0.5) rotate(12deg);
+            transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        #completionModal.show .modal-content {
+            transform: scale(1) rotate(0deg);
+        }
+
+        .sparkle {
+            position: absolute;
+            font-size: 4rem;
+            animation: spin 3s linear infinite;
+        }
+
+        .sparkle:nth-child(1) {
+            top: -1rem;
+            left: -1rem;
+        }
+
+        .sparkle:nth-child(2) {
+            top: -1rem;
+            right: -1rem;
+            animation-direction: reverse;
+        }
+
+        .sparkle:nth-child(3) {
+            bottom: -1rem;
+            left: -1rem;
+            animation-direction: reverse;
+        }
+
+        .sparkle:nth-child(4) {
+            bottom: -1rem;
+            right: -1rem;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .trophy {
+            width: 6rem;
+            height: 6rem;
+            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .trophy-icon {
+            font-size: 4rem;
+        }
+
+        .modal-title {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            text-align: center;
+            color: #78350f;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .modal-message {
+            font-size: 1.25rem;
+            text-align: center;
+            color: #92400e;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-subtitle {
+            text-align: center;
+            color: #a16207;
+            font-style: italic;
+            margin-bottom: 2rem;
+        }
+
+        .completion-image {
+            margin-bottom: 2rem;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border: 4px solid #f59e0b;
+        }
+
+        .completion-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .modal-button {
+            font-family: 'Cinzel', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid;
+        }
+
+        .modal-button.primary {
+            background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border-color: #fbbf24;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-button.primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-button.secondary {
+            background: rgba(255, 255, 255, 0.8);
+            color: #78350f;
+            border-color: #fed7aa;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-button.secondary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 1.75rem; }
+            .game-title { font-size: 2rem; }
+            .game-area { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-overlay"></div>
+    
+    <div class="container">
+        <!-- Start Screen -->
+        <div id="startScreen">
+            <div class="corner-decoration top-left"></div>
+            <div class="corner-decoration top-right"></div>
+            <div class="corner-decoration bottom-left"></div>
+            <div class="corner-decoration bottom-right"></div>
+
+            <h1>India Gate</h1>
+            <h2>Puzzle Challenge</h2>
+            <p class="subtitle">Reconstruct the beauty of Delhi</p>
+
+            <div class="description">
+                Essay On India Gate in English for Classes 1-3: 10 Lines ...India Gate is a 42-meter-high war memorial arch in New Delhi, designed by Edwin Lutyens, that honors Indian soldiers who died in World War I and the Third Anglo-Afghan War. Constructed from red Bharatpur stone, the monument has the names of over 13,516 soldiers inscribed on its walls.
+            </div>
+
+            <div class="preview-image">
+                <div class="preview-circle">
+                    <img src="https://images.unsplash.com/photo-1587474260584-136574528ed5?w=400" alt="India Gate">
+                </div>
+            </div>
+
+            <button class="start-button" onclick="startGame()">Start Game</button>
+
+            <div class="game-info">
+                <div class="game-info-item">
+                    <div class="info-dot"></div>
+                    <span>12 Pieces</span>
+                </div>
+                <div class="game-info-item">
+                    <div class="info-dot"></div>
+                    <span>3×4 Grid</span>
+                </div>
+                <div class="game-info-item">
+                    <div class="info-dot"></div>
+                    <span>Drag & Drop</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen">
+            <div class="game-header">
+                <h1 class="game-title">India Gate Puzzle</h1>
+                <div class="progress-counter">
+                    <p class="progress-text">
+                        Pieces Placed: <span class="progress-count" id="progressCount">0</span> / 12
+                    </p>
+                </div>
+            </div>
+
+            <div class="game-area">
+                <div class="panel">
+                    <h2 class="panel-title">Puzzle Pieces</h2>
+                    <div id="piecesContainer"></div>
+                </div>
+
+                <div class="panel">
+                    <h2 class="panel-title">Puzzle Grid</h2>
+                    <div id="gridContainer"></div>
+                </div>
+            </div>
+
+            <button class="back-button" onclick="backToStart()">← Back to Start</button>
+        </div>
+    </div>
+
+    <!-- Completion Modal -->
+    <div id="completionModal">
+        <div class="modal-content">
+            <div class="sparkle">✨</div>
+            <div class="sparkle">✨</div>
+            <div class="sparkle">✨</div>
+            <div class="sparkle">✨</div>
+
+            <div class="trophy">
+                <span class="trophy-icon">🏆</span>
+            </div>
+
+            <h1 class="modal-title">Congratulations!</h1>
+            <p class="modal-message">You Rebuilt the India Gate!</p>
+            <p class="modal-subtitle">The beauty of Delhi stands complete once again.</p>
+
+            <div class="completion-image">
+                <img src="https://images.unsplash.com/photo-1587474260584-136574528ed5?w=600" alt="India Gate Complete">
+            </div>
+
+            <div class="modal-buttons">
+                <button class="modal-button primary" onclick="restartGame()">Play Again</button>
+                <button class="modal-button secondary" onclick="backToStart()">Back to Start</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const IMAGE_URL = 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800&h=1066';
+        const ROWS = 4;
+        const COLS = 3;
+        const TOTAL_PIECES = ROWS * COLS;
+        const PIECE_SIZE = 100;
+
+        let pieces = [];
+        let draggedPiece = null;
+        let placedCount = 0;
+
+        // Create snap sound using Web Audio API
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSnapSound() {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
+
+        function initializePieces() {
+            pieces = [];
+            for (let row = 0; row < ROWS; row++) {
+                for (let col = 0; col < COLS; col++) {
+                    pieces.push({
+                        id: row * COLS + col,
+                        row: row,
+                        col: col,
+                        placed: false
+                    });
+                }
+            }
+            // Shuffle pieces
+            pieces.sort(() => Math.random() - 0.5);
+        }
+
+        function createPieceElement(piece, isInGrid = false) {
+            const div = document.createElement('div');
+            div.className = 'puzzle-piece';
+            div.draggable = !isInGrid;
+            div.dataset.id = piece.id;
+            
+            const bgPosX = -piece.col * PIECE_SIZE;
+            const bgPosY = -piece.row * PIECE_SIZE;
+            
+            div.style.backgroundImage = `url(${IMAGE_URL})`;
+            div.style.backgroundPosition = `${bgPosX}px ${bgPosY}px`;
+            
+            if (!isInGrid) {
+                div.addEventListener('dragstart', handleDragStart);
+                div.addEventListener('dragend', handleDragEnd);
+            }
+            
+            return div;
+        }
+
+        function createGridCell(row, col) {
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell';
+            cell.dataset.row = row;
+            cell.dataset.col = col;
+            
+            cell.addEventListener('dragover', handleDragOver);
+            cell.addEventListener('dragleave', handleDragLeave);
+            cell.addEventListener('drop', handleDrop);
+            
+            return cell;
+        }
+
+        function handleDragStart(e) {
+            const pieceId = parseInt(e.target.dataset.id);
+            draggedPiece = pieces.find(p => p.id === pieceId);
+            e.target.classList.add('dragging');
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            if (!e.currentTarget.classList.contains('filled')) {
+                e.currentTarget.classList.add('drag-over');
+            }
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            
+            if (!draggedPiece || e.currentTarget.classList.contains('filled')) {
+                return;
+            }
+            
+            const targetRow = parseInt(e.currentTarget.dataset.row);
+            const targetCol = parseInt(e.currentTarget.dataset.col);
+            
+            const isCorrect = draggedPiece.row === targetRow && draggedPiece.col === targetCol;
+            
+            if (isCorrect) {
+                // Mark piece as placed
+                draggedPiece.placed = true;
+                
+                // Remove from pieces container
+                const pieceElement = document.querySelector(`#piecesContainer .puzzle-piece[data-id="${draggedPiece.id}"]`);
+                if (pieceElement) {
+                    pieceElement.remove();
+                }
+                
+                // Add to grid
+                const gridPiece = createPieceElement(draggedPiece, true);
+                gridPiece.classList.add('snap-animation');
+                e.currentTarget.appendChild(gridPiece);
+                e.currentTarget.classList.add('filled');
+                
+                // Play snap sound
+                playSnapSound();
+                
+                // Update progress
+                placedCount++;
+                document.getElementById('progressCount').textContent = placedCount;
+                
+                // Check if complete
+                if (placedCount === TOTAL_PIECES) {
+                    setTimeout(showCompletionModal, 500);
+                }
+            }
+            
+            draggedPiece = null;
+        }
+
+        function renderGame() {
+            const piecesContainer = document.getElementById('piecesContainer');
+            const gridContainer = document.getElementById('gridContainer');
+            
+            piecesContainer.innerHTML = '';
+            gridContainer.innerHTML = '';
+            
+            // Render unplaced pieces
+            pieces.filter(p => !p.placed).forEach(piece => {
+                piecesContainer.appendChild(createPieceElement(piece, false));
+            });
+            
+            // Render grid
+            for (let row = 0; row < ROWS; row++) {
+                for (let col = 0; col < COLS; col++) {
+                    const cell = createGridCell(row, col);
+                    const placedPiece = pieces.find(p => p.placed && p.row === row && p.col === col);
+                    
+                    if (placedPiece) {
+                        const pieceElement = createPieceElement(placedPiece, true);
+                        cell.appendChild(pieceElement);
+                        cell.classList.add('filled');
+                    }
+                    
+                    gridContainer.appendChild(cell);
+                }
+            }
+        }
+
+        function startGame() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            
+            placedCount = 0;
+            document.getElementById('progressCount').textContent = '0';
+            
+            initializePieces();
+            renderGame();
+        }
+
+        function backToStart() {
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('completionModal').classList.remove('show');
+            document.getElementById('startScreen').style.display = 'block';
+        }
+
+        function restartGame() {
+            document.getElementById('completionModal').classList.remove('show');
+            placedCount = 0;
+            document.getElementById('progressCount').textContent = '0';
+            
+            initializePieces();
+            renderGame();
+        }
+
+        function showCompletionModal() {
+            const modal = document.getElementById('completionModal');
+            modal.classList.add('show');
+        }
+    </script>
+</body>
+</ht
